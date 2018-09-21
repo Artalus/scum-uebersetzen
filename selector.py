@@ -14,25 +14,25 @@ class TransWindow(QWidget):
         self.start = QPoint(0,0)
         self.end = QPoint(0,0)
 
-        pal = self.palette()
-        clr = pal.color(QPalette.Window)
-        clr.setAlpha(50)
-        pal.setColor(QPalette.Window, clr)
-        self.setPalette(pal)
+        # palette = QPalette()
+        # palette.setColor(QPalette.Base, Qt.transparent)
+        # self.setPalette(palette)
 
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setStyleSheet("background:transparent;")
+        # self.setStyleSheet("background:transparent;")
 
         self.showMaximized()
         self.activateWindow()
         self.raise_()
-        self.setWindowFlags(Qt.Window \
+        self.setWindowFlags(0 \
+                            # | Qt.CustomizeWindowHint
+                            # | Qt.Window \
                             | Qt.WindowStaysOnTopHint  \
-                            | Qt.X11BypassWindowManagerHint \
+                            # | Qt.X11BypassWindowManagerHint \
                             | Qt.FramelessWindowHint )
 
         self.setGeometry(QApplication.desktop().availableGeometry())
-        self.setWindowOpacity(0.1)
+        # self.setWindowOpacity(0.5)
 
     def mousePressEvent(self, ev :QMouseEvent):
         self.start = ev.pos()
@@ -42,7 +42,7 @@ class TransWindow(QWidget):
         painter.setPen(QPen(QColor(255,0,0)))
         # painter.eraseRect()
         painter.drawRect(QRect(self.start, self.end))
-        # QMainWindow.paintEvent(self, ev)
+        QWidget.paintEvent(self, ev)
     
     def mouseReleaseEvent(self, ev :QMouseEvent):
         r = QRect(self.start, ev.pos())
