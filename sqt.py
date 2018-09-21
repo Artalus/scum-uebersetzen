@@ -18,6 +18,7 @@ class ScumConfig(JsConfig):
     api_key = ""
     poll_period = 1
     selection = [[0, 0], [0, 0]]
+    start_minimized = False
 
     def __init__(self, **js):
         super().__init__(**js)
@@ -112,7 +113,8 @@ if __name__ == '__main__':
             QStyle.SP_DialogOpenButton), ex)
 
         trayIcon.show()
-        ex.show()
+        if not c.start_minimized:
+            ex.show()
         app.exec_()
 
     main()
