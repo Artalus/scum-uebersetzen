@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QPoint, QRect, Qt, pyqtSignal
 from PyQt5.QtGui import QColor, QMouseEvent, QPainter, QPalette, QPen
 from PyQt5.QtWidgets import (QApplication, QLabel, QPushButton,
-                             QVBoxLayout, QWidget)
+                             QHBoxLayout, QWidget)
 
 class TransWindow(QWidget):
     '''A transparent window to draw selection rect on
@@ -46,7 +46,7 @@ class TransWindow(QWidget):
         QWidget.paintEvent(self, ev)
     
     def mouseReleaseEvent(self, ev :QMouseEvent):
-        r = QRect(self.start, ev.pos())
+        r = QRect(self.start, ev.pos()).normalized()
         self.selectionDone.emit(r)
         self.close()
     
@@ -56,11 +56,13 @@ class TransWindow(QWidget):
     
 
 class Selector(QWidget):
-    def __init__(self):
+    selectionChanged = pyqtSignal()
+
+    def __init__(self, initial_selection=QRect(0, 0, 100, 100)):
         super().__init__()
         self.initUI()
 
-        self.setRect(QRect(0, 0, 100, 100))
+        self._setRect(initial_selection, False)
 
     def initUI(self):
         btn = QPushButton('Select region')
@@ -69,21 +71,24 @@ class Selector(QWidget):
         self.btn = btn
 
         self.lbl = QLabel()
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.lbl)
-        vbox.addWidget(btn)
-        self.setLayout(vbox)
+        lay = QHBoxLayout()
+        lay.addStretch(1)
+        lay.addWidget(self.lbl)
+        lay.addStretch(1)
+        lay.addWidget(btn)
+        self.setLayout(lay)
 
     def init_selection(self):
         w = TransWindow(self)
         w.show()
-        w.selectionDone.connect(self.setRect)
+        w.selectionDone.connect(self._setRect)
 
-    def setRect(self, selection: QRect):
-        self.start = selection.topLeft()
-        self.end = selection.bottomRight()
-
-        self.lbl.setText('From {} to {}'.format(self.start, self.end))
+    def _setRect(self, selection: QRect, do_emit=True):
+        self.selection = selection
+        l,t,r,b = selection.getCoords()
+        self.lbl.setText(f'From ({l},{t}) to ({r},{b})')
+        if do_emit:
+            self.selectionChanged.emit()
 
 
 if __name__ == '__main__':
