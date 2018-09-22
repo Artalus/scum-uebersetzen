@@ -3,7 +3,6 @@ from PyQt5.QtGui import QColor, QMouseEvent, QPainter, QPalette, QPen
 from PyQt5.QtWidgets import (QApplication, QLabel, QPushButton,
                              QVBoxLayout, QWidget)
 
-
 class TransWindow(QWidget):
     '''A transparent window to draw selection rect on
     '''
@@ -40,8 +39,10 @@ class TransWindow(QWidget):
     def paintEvent(self, ev):
         painter = QPainter(self)
         painter.setPen(QPen(QColor(255,0,0)))
-        # painter.eraseRect()
+        painter.fillRect(self.geometry(), QColor(0,255,0,10))
         painter.drawRect(QRect(self.start, self.end))
+        # painter.fillRect(QRect(self.start, self.end), QColor(255,0,0,10))
+        # painter.eraseRect(QRect(self.start, self.end))
         QWidget.paintEvent(self, ev)
     
     def mouseReleaseEvent(self, ev :QMouseEvent):
