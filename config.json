@@ -1,6 +1,15 @@
 {
     "api_key": "",
     "poll_period": 1,
-    "selection": [[0,0], [0,0]],
-    "start_minimized": true
+    "selection": [
+        [
+            0,
+            0
+        ],
+        [
+            0,
+            0
+        ]
+    ],
+    "start_minimized": false
 }
