@@ -10,6 +10,8 @@ from PyQt5.QtCore import pyqtSignal, QObject, QPoint, QRect, QTimer
 
 from config import JsConfig
 
+import ueberfilter as uf
+
 
 class ScumConfig(JsConfig):
     api_key = ""
@@ -41,7 +43,9 @@ class OCR(QObject):
         assert(self.selection is not None)
         print('> grabbing')
         img = ImageGrab.grab(self.selection)
-        img.save('ocr.png')
+        img = uf.beautify(img)
+        # img.show()
+        # img.save('ocr.png')
         print ('> ocring')
         s = pt.image_to_string(img)
         self.textDetected.emit(s)
