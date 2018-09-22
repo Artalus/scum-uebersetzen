@@ -69,6 +69,7 @@ from uebersetzen import Uebersetzen
 
 class ParamsWindow(QWidget):
     triggerConfigSave = pyqtSignal()
+    started = False
 
     def __init__(self, configname: str):
         super().__init__()
@@ -87,7 +88,7 @@ class ParamsWindow(QWidget):
         sel.setGeometry(20, 40, 100, 50)
         
         hb = QHBoxLayout()
-        ocr = QPushButton('Über!')
+        self.ocr = ocr = QPushButton('Über!')
         ocr.clicked.connect(self.ueber)
         hb.addWidget(ocr)
         hb.addWidget(sel)
@@ -135,7 +136,13 @@ class ParamsWindow(QWidget):
         self.ub._applyConfig(c)
 
     def ueber(self):
-        self.ub.performOcr()
+        if self.started:
+            self.ocr.setText('Über!')
+            self.ub.stopOcr()
+        else:
+            self.ocr.setText('stÖp!')
+            self.ub.startOcr(2)
+        self.started = not self.started
 
     def write(self, text: str):
         self.chatlog.setText(text)

@@ -58,6 +58,8 @@ class Translator(QObject):
         self.api_key = api
 
     def performTranslation(self, original: str):
+        self.translationDone.emit(original)
+        return
         print('> translating', original)
         original = quote(original)
         if not self.api_key:
@@ -98,6 +100,12 @@ class Uebersetzen(QObject):
     
     def performOcr(self):
         self.requestOcrSent.emit()
+    
+    def startOcr(self, interval_sec):
+        self.timer.setInterval(interval_sec*1000)
+        self.timer.start()
+    def stopOcr(self):
+        self.timer.stop()
         
 
 if __name__ == '__main__':
