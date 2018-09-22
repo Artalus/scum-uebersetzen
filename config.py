@@ -7,6 +7,14 @@ class JsConfig:
             if not hasattr(self, a):
                 print("warning: json sets '{0}: {1}' that has no default value".format(a,b))
             setattr(self, a, b)
+
+    def save_to_file(self, filename: str):
+        prepared = self.prepare_save()
+        with open(filename, 'w') as f:
+            json.dump(prepared, f, indent=4)
+
+    def prepare_save(self):
+        pass
     
     @staticmethod
     def read_js(filename: str):
