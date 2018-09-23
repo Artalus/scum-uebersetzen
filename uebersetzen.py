@@ -6,7 +6,7 @@ from urllib.parse import quote
 import pytesseract as pt
 import requests
 from PIL import ImageGrab
-from PyQt5.QtCore import pyqtSignal, QObject, QPoint, QRect, QTimer
+from PyQt5.QtCore import pyqtSignal, QObject, QPoint, QRect, QTimer, QThread
 
 from config import JsConfig
 
@@ -80,10 +80,17 @@ class Uebersetzen(QObject):
 
     ocr = OCR()
     tran = Translator()
+    thr = QThread()
 
     def __init__(self, config: ScumConfig):
         super().__init__()
         self.timer = tm = QTimer(self)
+        self._applyConfig(config)
+
+        self.thr.start()
+
+        self.ocr.moveToThread(self.thr)
+        self.tran.moveToThread(self.thr)
         tm.timeout.connect(self.performOcr)
 
         self.requestOcrSent.connect(self.ocr.performOcr)
@@ -91,7 +98,6 @@ class Uebersetzen(QObject):
         self.textDetected.connect(self.tran.performTranslation)
         self.tran.translationDone.connect(self.textTranslated.emit)
 
-        self._applyConfig(config)
 
     def _applyConfig(self, c: ScumConfig):
         self.ocr.setSelection(c.selection.getCoords())
