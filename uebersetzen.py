@@ -33,13 +33,22 @@ class ScumConfig(JsConfig):
 
 class OCR(QObject):
     textDetected = pyqtSignal(str)
+    should = False
 
     selection = None
 
     def setSelection(self, sel: Tuple[int,int,int,int]):
         self.selection = sel
+
+    def requestOcr(self):
+        if self.should:
+            return
+        self.should = True
+        QTimer.singleShot(0, self._performOcr)
+
     
-    def performOcr(self):
+    def _performOcr(self):
+        self.should = False
         assert(self.selection is not None)
         print('> grabbing')
         img = ImageGrab.grab(self.selection)
@@ -49,6 +58,9 @@ class OCR(QObject):
         print ('> ocring')
         s = pt.image_to_string(img)
         self.textDetected.emit(s)
+        if self.should:
+            QTimer.singleShot(0, self._performOcr)
+        self.should = False
 
 class Translator(QObject):
     translationDone = pyqtSignal(str)
@@ -93,7 +105,7 @@ class Uebersetzen(QObject):
         self.tran.moveToThread(self.thr)
         tm.timeout.connect(self.performOcr)
 
-        self.requestOcrSent.connect(self.ocr.performOcr)
+        self.requestOcrSent.connect(self.ocr.requestOcr)
         self.ocr.textDetected.connect(self.textDetected.emit)
         self.textDetected.connect(self.tran.performTranslation)
         self.tran.translationDone.connect(self.textTranslated.emit)
