@@ -39,16 +39,15 @@ class Tray(QSystemTrayIcon):
         act = menu.addAction("Exit")
         act.triggered.connect(QApplication.exit)
 
-        self.activated.connect(self.showWindow2)
+        self.activated.connect(self.showWindow)
 
         self.setContextMenu(menu)
 
-    def showWindow(self):
-        self.params.show()
-
-    def showWindow2(self, ar: QSystemTrayIcon.ActivationReason):
-        if ar == QSystemTrayIcon.Trigger:
+    def showWindow(self, ar: QSystemTrayIcon.ActivationReason):
+        if isinstance(ar, bool) or ar == QSystemTrayIcon.Trigger: # btn.clicked or tray.LMB
             self.params.show()
+            self.params.setWindowState(Qt.WindowNoState)
+            self.params.activateWindow()
 
 
 class Writer(Thread):
@@ -141,7 +140,7 @@ class ParamsWindow(QWidget):
             self.ub.stopOcr()
         else:
             self.ocr.setText('stÖp!')
-            self.ub.startOcr(2)
+            self.ub.startOcr(self.config.poll_period)
         self.started = not self.started
 
     def write(self, text: str):
