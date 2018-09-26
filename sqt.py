@@ -140,7 +140,7 @@ class ParamsWindow(QWidget):
             self.ub.stopOcr()
         else:
             self.ocr.setText('stÖp!')
-            self.ub.startOcr(self.config.poll_period)
+            self.ub.startOcr()
         self.started = not self.started
 
     def write(self, text: str):

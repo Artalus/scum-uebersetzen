@@ -94,10 +94,13 @@ class Uebersetzen(QObject):
     tran = Translator()
     thr = QThread()
 
+    config = None
+
     def __init__(self, config: ScumConfig):
         super().__init__()
+        self.config = config
         self.timer = tm = QTimer(self)
-        self._applyConfig(config)
+        self._applyConfig()
 
         self.thr.start()
 
@@ -111,7 +114,8 @@ class Uebersetzen(QObject):
         self.tran.translationDone.connect(self.textTranslated.emit)
 
 
-    def _applyConfig(self, c: ScumConfig):
+    def _applyConfig(self):
+        c = self.config
         self.ocr.setSelection(c.selection.getCoords())
         self.tran.setApi(c.api_key)
         self.timer.setInterval(c.poll_period*1000)
@@ -119,8 +123,8 @@ class Uebersetzen(QObject):
     def performOcr(self):
         self.requestOcrSent.emit()
     
-    def startOcr(self, interval_sec):
-        self.timer.setInterval(interval_sec*1000)
+    def startOcr(self):
+        self.timer.setInterval(self.config.poll_period*1000)
         self.timer.start()
     def stopOcr(self):
         self.timer.stop()

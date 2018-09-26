@@ -30,10 +30,10 @@ def beautify(img: Image) -> Image:
     # cv2.imshow('eq', gray)
     
     gray = cv2.resize(gray, None, fx=2,fy=2, interpolation=cv2.INTER_LINEAR)
-    cv2.imshow('scaled', gray)
+    # cv2.imshow('scaled', gray)
 
     gray = cv2.cvtColor(gray, cv2.COLOR_BGR2GRAY)
-    cv2.imshow('origin', gray)
+    # cv2.imshow('origin', gray)
     # g2 = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
     gray = cv2.threshold(gray, 100, 255, cv2.THRESH_TOZERO)[1]
     cv2.imshow('thresh_zero', gray)
