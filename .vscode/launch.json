@@ -22,7 +22,7 @@
             "name": "Scum",
             "type": "python",
             "request": "launch",
-            "program": "./scum.py",
+            "program": "${workspaceFolder}/sqt.py",
             "console": "integratedTerminal"
         },
     ]
